@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fishmen Tackle — Business Manager</title>
+<!-- Android/PWA test-deployment additions: installable "Add to Home Screen" support via Chrome on
+     Android. Purely additive — no existing tag above/below was changed, no app behavior affected. -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#C99A3E">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -381,7 +388,7 @@ tr:last-child td{border-bottom:none}
       <section class="section" id="sec-invoices">
         <div class="inv-tabs">
           <button class="inv-tab active" id="tabSales">Sales Invoices</button>
-          <button class="inv-tab" id="tabPurchase">Purchase Invoices <span class="soon" style="position:static">Coming Next</span></button>
+          <button class="inv-tab" id="tabPurchase">Purchase Invoices</button>
         </div>
 
         <div id="invoicesListWrap">
@@ -702,6 +709,69 @@ tr:last-child td{border-bottom:none}
         </div>
       </section>
 
+      <section class="section" id="sec-returns">
+        <div id="retListWrap">
+          <div class="panel">
+            <div class="panel-head"><div><h2>Returns</h2><p style="margin:2px 0 0;font-size:12px;font-weight:400;color:var(--ink-soft)">Customer/marketplace returns — condition decides whether sellable stock is restored.</p></div>
+              <button class="btn" id="addReturnBtn">+ New Return</button></div>
+            <div class="toolbar">
+              <input type="text" id="retSearch" placeholder="Search return #, SKU, or product…">
+              <select id="retChannelFilter"><option value="">All channels</option><option>Direct Sales</option><option>Meesho</option><option>Amazon</option></select>
+              <select id="retConditionFilter"><option value="">All conditions</option><option value="resellable">Resellable</option><option value="damaged">Damaged/Unsellable</option><option value="awaiting-inspection">Awaiting Inspection</option></select>
+            </div>
+            <div class="table-wrap"><table><thead><tr>
+              <th>Return #</th><th>Date</th><th>Channel</th><th>SKU</th><th>Product</th><th>Qty</th><th>Condition</th>
+              <th>Refund</th><th>Return Cost</th><th>Match</th><th></th>
+            </tr></thead><tbody id="retBody"></tbody></table></div>
+            <div class="empty" id="retEmpty" style="display:none">No returns recorded yet.</div>
+          </div>
+        </div>
+
+        <div id="retFormWrap" style="display:none">
+          <div class="panel">
+            <div class="panel-head"><h2 id="retFormTitle">New Return</h2><button class="btn secondary" id="retCancelBtn">← Back to Returns</button></div>
+            <div class="form-grid" style="padding:16px 16px 0">
+              <div><label>Return Date *</label><input type="date" id="r_date"></div>
+              <div><label>Channel *</label><select id="r_channel"><option value="">Select…</option><option>Direct Sales</option><option>Meesho</option><option>Amazon</option></select></div>
+              <div><label>Order / Invoice Reference</label><input id="r_orderRef" placeholder="Optional — e.g. FT-INV-0007"></div>
+              <div><label>Product (search by name or SKU) *</label><select id="r_product"><option value="">Select product…</option></select></div>
+              <div><label>Quantity *</label><input type="number" min="1" id="r_quantity"></div>
+              <div><label>Original Selling Price (₹) *</label><input type="number" min="0" id="r_sellingPrice"></div>
+              <div><label>Return Shipping Cost (₹)</label><input type="number" min="0" id="r_shipping" value="0"></div>
+              <div><label>Other Deductions (₹)</label><input type="number" min="0" id="r_deductions" value="0"></div>
+              <div><label>Condition *</label><select id="r_condition">
+                <option value="">Select…</option>
+                <option value="resellable">Resellable</option>
+                <option value="damaged">Damaged / Unsellable</option>
+                <option value="awaiting-inspection">Awaiting Inspection</option>
+              </select></div>
+              <div><label>Refund Status *</label><select id="r_revenueStatus"><option value="">Select…</option><option value="refunded">Refunded</option><option value="not-refunded">Not Refunded</option></select></div>
+              <div class="full"><label>Notes</label><textarea id="r_notes" rows="2"></textarea></div>
+            </div>
+            <div id="r_matchWarning" style="padding:0 16px"></div>
+            <div id="r_preview" style="padding:0 16px"></div>
+            <div id="r_errMsg" style="padding:0 16px;color:var(--danger);font-size:13px"></div>
+            <div class="modal-actions"><button class="btn secondary" id="retFormCancelBtn">Cancel</button><button class="btn" id="retSaveBtn">Save Return</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-pl">
+        <p style="margin:0 0 12px;font-size:13px;color:var(--ink-soft)">A dedicated profit view, built from the same sales, expense, and return records as Reports — never a second calculation.</p>
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-head"><h2>Profit & Loss Filters</h2></div>
+          <div class="toolbar">
+            <select id="plPreset">
+              <option value="thisMonth">This month</option><option value="lastMonth">Last month</option>
+              <option value="last3">Last 3 months</option><option value="thisYear">This year</option><option value="custom">Custom range</option>
+            </select>
+            <input type="date" id="plFrom" style="display:none">
+            <input type="date" id="plTo" style="display:none">
+          </div>
+        </div>
+        <div id="plWrap"></div>
+      </section>
+
       <section class="section" id="sec-locked"><div class="locked"><h2 id="lockedTitle"></h2><p id="lockedBody"></p></div></section>
     </div>
   </div>
@@ -838,6 +908,8 @@ const DataLayer = (() => {
     if(!Array.isArray(db.productImportHistory)) db.productImportHistory = [];
     if(!Array.isArray(db.stockAdjustments)) db.stockAdjustments = [];
     if(!db.settings.adjustmentPrefix){ db.settings.adjustmentPrefix = 'FT-ADJ-'; db.settings.adjustmentSeq = 1; }
+    if(!Array.isArray(db.returns)) db.returns = [];
+    if(!db.settings.returnPrefix){ db.settings.returnPrefix = 'FT-RET-'; db.settings.returnSeq = 1; }
     db.products.forEach(p=>{ if(p.size===undefined || p.size===null) p.size = ''; }); // Size is optional text; older products get an empty value
     if(!db.settings.expensePrefix){ db.settings.expensePrefix = 'FT-EXP-'; db.settings.expenseSeq = 1; }
     write(db);
@@ -849,6 +921,7 @@ const DataLayer = (() => {
   function nextPurchaseNumber(){ const n = db.settings.purchaseSeq; db.settings.purchaseSeq++; write(db); return db.settings.purchasePrefix + pad(n); }
   function nextExpenseNumber(){ const n = db.settings.expenseSeq; db.settings.expenseSeq++; write(db); return db.settings.expensePrefix + pad(n); }
   function nextAdjustmentNumber(){ const n = db.settings.adjustmentSeq; db.settings.adjustmentSeq++; write(db); return db.settings.adjustmentPrefix + pad(n); }
+  function nextReturnNumber(){ const n = db.settings.returnSeq; db.settings.returnSeq++; write(db); return db.settings.returnPrefix + pad(n); }
   function addSupplierIfNew(name){
     if(!name) return; const n = name.trim(); if(!n) return;
     if(!db.suppliers.some(s=>s.name.toLowerCase()===n.toLowerCase()))
@@ -1036,6 +1109,95 @@ const DataLayer = (() => {
     deleteExpense(id){ db.expenses = db.expenses.filter(x=>x.id!==id); write(db); },
 
     getStockAdjustments(){ return db.stockAdjustments; },
+
+    getReturns(){ return db.returns; },
+    getReturn(id){ return db.returns.find(r=>r.id===id); },
+    // A return is only "reliably matched" when it's Direct Sales AND the supplied reference exactly
+    // matches a real, still-existing Sales Invoice number — marketplace channels have no stable order ID
+    // in this app's sales records, so they're always reported as unmatched (manual reference only).
+    _computeReturnMatch(channel, orderReference){
+      if(channel!=='Direct Sales' || !orderReference) return false;
+      return db.invoices.some(inv=>inv.invoiceNumber===orderReference);
+    },
+    validateReturnInput(data){
+      const errors = [];
+      if(!data.date) errors.push('Date is required');
+      if(!['Direct Sales','Meesho','Amazon'].includes(data.channel)) errors.push('Channel must be Direct Sales, Meesho, or Amazon');
+      if(!data.productId) errors.push('Product is required');
+      else if(!db.products.find(p=>p.id===data.productId)) errors.push('Product not found');
+      if(!(data.quantity>0)) errors.push('Quantity must be greater than zero');
+      if(!(data.originalSellingPrice>=0)) errors.push('Original selling price cannot be negative');
+      if(!(data.returnShippingCost>=0)) errors.push('Return shipping cost cannot be negative');
+      if(!(data.otherDeductions>=0)) errors.push('Other deductions cannot be negative');
+      if(!['resellable','damaged','awaiting-inspection'].includes(data.condition)) errors.push('Condition must be resellable, damaged, or awaiting-inspection');
+      if(!['refunded','not-refunded'].includes(data.revenueStatus)) errors.push('Revenue status must be refunded or not-refunded');
+      return errors;
+    },
+    // Ensures the stock effect of a return always matches its CURRENT condition exactly once:
+    // reverses whatever was previously applied (if anything), then re-applies based on the new
+    // condition/quantity. Safe to call on create (nothing to reverse yet) and on every edit.
+    _syncReturnStock(rec, wasApplied, previousQty){
+      if(wasApplied){
+        adjustStock(rec.productId, -previousQty, 'return-restock-reversal', rec.returnNumber, 'Reversal for return '+rec.returnNumber+' condition/quantity change');
+      }
+      if(rec.condition==='resellable'){
+        adjustStock(rec.productId, rec.quantity, 'return-restock', rec.returnNumber, 'Resellable return '+rec.returnNumber);
+        rec.stockApplied = true; rec.stockAppliedQty = rec.quantity;
+      } else {
+        rec.stockApplied = false; rec.stockAppliedQty = 0;
+      }
+    },
+    createReturn(data){
+      const errors = this.validateReturnInput(data);
+      if(errors.length) return {ok:false, errors};
+      const p = db.products.find(x=>x.id===data.productId);
+      const matched = this._computeReturnMatch(data.channel, data.orderReference);
+      const rec = {
+        id:'ret'+Date.now()+Math.random().toString(36).slice(2,6), returnNumber: nextReturnNumber(),
+        date:data.date, channel:data.channel, orderReference:(data.orderReference||'').trim(), matched,
+        productId:data.productId, sku:p.sku, productName:p.name, quantity:data.quantity,
+        originalSellingPrice:data.originalSellingPrice, returnShippingCost:data.returnShippingCost, otherDeductions:data.otherDeductions,
+        condition:data.condition, revenueStatus:data.revenueStatus, notes:(data.notes||'').trim(),
+        costBasisAtReturn: p.purchasePrice, // captured now so a later damaged-loss figure is never re-derived from a since-changed price
+        stockApplied:false, stockAppliedQty:0, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()
+      };
+      this._syncReturnStock(rec, false, 0);
+      db.returns.push(rec); write(db);
+      return {ok:true, ret:rec};
+    },
+    // Full edit: validates the new data, then atomically reverses whatever stock effect the return
+    // previously had and reapplies based on the new condition/quantity — never both states at once,
+    // never left partially applied.
+    updateReturn(id, data){
+      const rec = db.returns.find(r=>r.id===id); if(!rec) return {ok:false, errors:['Return not found']};
+      const errors = this.validateReturnInput(data);
+      if(errors.length) return {ok:false, errors};
+      const wasApplied = rec.stockApplied, previousQty = rec.stockAppliedQty;
+      const p = db.products.find(x=>x.id===data.productId);
+      Object.assign(rec, {
+        date:data.date, channel:data.channel, orderReference:(data.orderReference||'').trim(),
+        matched: this._computeReturnMatch(data.channel, data.orderReference),
+        productId:data.productId, sku:p.sku, productName:p.name, quantity:data.quantity,
+        originalSellingPrice:data.originalSellingPrice, returnShippingCost:data.returnShippingCost, otherDeductions:data.otherDeductions,
+        condition:data.condition, revenueStatus:data.revenueStatus, notes:(data.notes||'').trim(), updatedAt:new Date().toISOString()
+      });
+      this._syncReturnStock(rec, wasApplied, previousQty);
+      write(db);
+      return {ok:true, ret:rec};
+    },
+    deleteReturn(id){
+      const rec = db.returns.find(r=>r.id===id); if(!rec) return;
+      if(rec.stockApplied){
+        adjustStock(rec.productId, -rec.stockAppliedQty, 'return-restock-reversal', rec.returnNumber, 'Return '+rec.returnNumber+' deleted');
+      }
+      db.returns = db.returns.filter(r=>r.id!==id);
+      write(db);
+    },
+    // revenueDeduction: the amount Profit & Loss should subtract from recognized sales revenue — only
+    // when the return is explicitly marked refunded, counted once per return, and never written back
+    // into db.sales/db.invoices, so it can never collide with how the original sale is already recorded.
+    returnRevenueDeduction(rec){ return rec.revenueStatus==='refunded' ? rec.quantity*rec.originalSellingPrice : 0; },
+    returnCost(rec){ return (rec.returnShippingCost||0) + (rec.otherDeductions||0); },
     // Part 1A: records the adjustment only. Does NOT change product.currentStock and does NOT create a
     // stock movement — that integration is explicitly deferred to a later part.
     addStockAdjustment(data){
@@ -1263,8 +1425,10 @@ const NAV = [
   {id:'stockadj', icon:'🧮', label:'Stock Adjustment', phase:1, theme:'products'},
   {id:'suppliers', icon:'🏭', label:'Suppliers', phase:1, theme:'suppliers'},
   {id:'invoices', icon:'🧾', label:'Invoices', phase:1, theme:'sales'},
+  {id:'returns', icon:'↩️', label:'Returns', phase:1, theme:'purchases'},
   {id:'expenses', icon:'💸', label:'Expenses', phase:1, theme:'expenses'},
   {id:'marketplace', icon:'🔗', label:'Marketplace Integration', phase:1, theme:'marketplace'},
+  {id:'pl', icon:'📈', label:'Profit & Loss', phase:1, theme:'reports'},
   {id:'reports', icon:'📑', label:'Reports', phase:1, theme:'reports'},
   {id:'settings', icon:'⚙️', label:'Settings', phase:1, theme:'settings'},
 ];
@@ -1292,6 +1456,8 @@ function goTo(id){
     if(id==='settings') renderSettings();
     if(id==='suppliers') renderSuppliers();
     if(id==='stockadj') renderStockAdjustments();
+    if(id==='returns') renderReturns();
+    if(id==='pl') renderPL();
     if(id==='expenses') renderExpenses();
     if(id==='reports') renderReports();
   } else {
@@ -3430,6 +3596,225 @@ document.getElementById('adjSaveBtn').addEventListener('click', ()=>{
   if(typeof renderDashboard==='function') renderDashboard();
 });
 
+/* ---------- Returns ---------- */
+let editingReturnId = null;
+function showRetSubview(name){
+  document.getElementById('retListWrap').style.display = name==='list' ? 'block' : 'none';
+  document.getElementById('retFormWrap').style.display = name==='form' ? 'block' : 'none';
+}
+const CONDITION_LABEL = {resellable:'Resellable', damaged:'Damaged/Unsellable', 'awaiting-inspection':'Awaiting Inspection'};
+function renderReturns(){
+  showRetSubview('list');
+  const q = document.getElementById('retSearch').value.trim().toLowerCase();
+  const chF = document.getElementById('retChannelFilter').value;
+  const condF = document.getElementById('retConditionFilter').value;
+  let rows = DataLayer.getReturns().filter(r=>{
+    if(q && !(r.returnNumber.toLowerCase().includes(q) || r.sku.toLowerCase().includes(q) || r.productName.toLowerCase().includes(q))) return false;
+    if(chF && r.channel!==chF) return false;
+    if(condF && r.condition!==condF) return false;
+    return true;
+  });
+  rows = [...rows].sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+  document.getElementById('retEmpty').style.display = rows.length ? 'none' : 'block';
+  document.getElementById('retBody').innerHTML = rows.map(r=>{
+    const condBadgeClass = r.condition==='resellable' ? 'ok' : r.condition==='damaged' ? 'out' : 'low';
+    const matchBadge = r.channel==='Direct Sales'
+      ? (r.matched ? '<span class="badge ok">Matched</span>' : '<span class="badge out">Unmatched</span>')
+      : `<span class="badge out" title="Marketplace returns cannot be reliably matched to a sale in this app">Not verifiable</span>`;
+    return `<tr>
+      <td>${r.returnNumber}</td><td>${new Date(r.date).toLocaleDateString('en-IN')}</td><td>${r.channel}</td>
+      <td>${r.sku}</td><td class="wrap-name">${r.productName}</td><td>${r.quantity}</td>
+      <td><span class="badge ${condBadgeClass}">${CONDITION_LABEL[r.condition]}</span></td>
+      <td>${r.revenueStatus==='refunded' ? fmtINR(DataLayer.returnRevenueDeduction(r)) : '<span style="color:var(--ink-soft)">Not refunded</span>'}</td>
+      <td>${fmtINR(DataLayer.returnCost(r))}</td>
+      <td>${matchBadge}</td>
+      <td><div class="row-actions">
+        <button data-redit="${r.id}" title="View / Edit">✎</button>
+        <button data-rdel="${r.id}" title="Delete">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  document.querySelectorAll('[data-redit]').forEach(b=>b.addEventListener('click', ()=>openReturnForm(b.dataset.redit)));
+  document.querySelectorAll('[data-rdel]').forEach(b=>b.addEventListener('click', ()=>{
+    const r = DataLayer.getReturn(b.dataset.rdel);
+    const stockNote = r.stockApplied ? ` This will reverse the ${r.quantity} unit(s) it added back to sellable stock.` : '';
+    if(confirm('Delete return '+r.returnNumber+'?'+stockNote)){
+      DataLayer.deleteReturn(b.dataset.rdel);
+      renderReturns(); renderProducts(); renderDashboard();
+      toast('Return deleted');
+    }
+  }));
+}
+['retSearch','retChannelFilter','retConditionFilter'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderReturns);
+  document.getElementById(id).addEventListener('change', renderReturns);
+});
+function retProductOptions(selectedId){
+  return '<option value="">Select product…</option>' + DataLayer.getProducts().map(p=>
+    `<option value="${p.id}" ${p.id===selectedId?'selected':''}>${p.sku} — ${p.name} (stock ${p.currentStock})</option>`).join('');
+}
+function openReturnForm(id){
+  editingReturnId = id || null;
+  const r = id ? DataLayer.getReturn(id) : null;
+  document.getElementById('retFormTitle').textContent = id ? 'Edit Return '+r.returnNumber : 'New Return';
+  document.getElementById('r_date').value = r ? r.date : new Date().toISOString().slice(0,10);
+  document.getElementById('r_channel').value = r ? r.channel : '';
+  document.getElementById('r_orderRef').value = r ? r.orderReference : '';
+  document.getElementById('r_product').innerHTML = retProductOptions(r ? r.productId : '');
+  document.getElementById('r_quantity').value = r ? r.quantity : '';
+  document.getElementById('r_sellingPrice').value = r ? r.originalSellingPrice : '';
+  document.getElementById('r_shipping').value = r ? r.returnShippingCost : 0;
+  document.getElementById('r_deductions').value = r ? r.otherDeductions : 0;
+  document.getElementById('r_condition').value = r ? r.condition : '';
+  document.getElementById('r_revenueStatus').value = r ? r.revenueStatus : '';
+  document.getElementById('r_notes').value = r ? r.notes||'' : '';
+  document.getElementById('r_errMsg').textContent = '';
+  renderReturnPreview();
+  showRetSubview('form');
+}
+document.getElementById('addReturnBtn').addEventListener('click', ()=>openReturnForm(null));
+document.getElementById('retCancelBtn').addEventListener('click', renderReturns);
+document.getElementById('retFormCancelBtn').addEventListener('click', renderReturns);
+function renderReturnPreview(){
+  const p = DataLayer.getProducts().find(x=>x.id===document.getElementById('r_product').value);
+  const channel = document.getElementById('r_channel').value;
+  const orderRef = document.getElementById('r_orderRef').value.trim();
+  const qty = Number(document.getElementById('r_quantity').value||0);
+  const price = Number(document.getElementById('r_sellingPrice').value||0);
+  const shipping = Number(document.getElementById('r_shipping').value||0);
+  const deductions = Number(document.getElementById('r_deductions').value||0);
+  const condition = document.getElementById('r_condition').value;
+  const revenueStatus = document.getElementById('r_revenueStatus').value;
+
+  const warnEl = document.getElementById('r_matchWarning');
+  if(channel==='Meesho' || channel==='Amazon'){
+    warnEl.innerHTML = `<p style="font-size:12px;color:var(--danger);margin:0 0 10px">⚠ ${channel} returns cannot be reliably matched to a specific original sale in this app (no stable marketplace order ID is stored). This return will be recorded and costed, but not shown as "Matched" regardless of any reference you enter.</p>`;
+  } else if(channel==='Direct Sales' && orderRef){
+    const isReal = DataLayer.getInvoices().some(inv=>inv.invoiceNumber===orderRef);
+    warnEl.innerHTML = isReal
+      ? `<p style="font-size:12px;color:var(--good);margin:0 0 10px">✓ Reference matches an existing Sales Invoice.</p>`
+      : `<p style="font-size:12px;color:var(--danger);margin:0 0 10px">⚠ "${orderRef}" does not match any existing Sales Invoice number — this will be recorded as unmatched.</p>`;
+  } else { warnEl.innerHTML = ''; }
+
+  if(p && qty>0){
+    const newStock = condition==='resellable' ? p.currentStock + qty : p.currentStock;
+    const refundAmt = revenueStatus==='refunded' ? qty*price : 0;
+    document.getElementById('r_preview').innerHTML = `<div class="grid" style="margin-bottom:0">
+      <div class="card"><div class="label">Current Stock</div><div class="value">${p.currentStock}</div></div>
+      <div class="card ${condition==='resellable'?'good':''}"><div class="label">Stock After Save</div><div class="value">${newStock}${condition!=='resellable'?' (unchanged)':''}</div></div>
+      <div class="card"><div class="label">Revenue Deduction</div><div class="value" style="font-size:16px">${fmtINR(refundAmt)}</div></div>
+      <div class="card"><div class="label">Return Cost (shipping + deductions)</div><div class="value" style="font-size:16px">${fmtINR(shipping+deductions)}</div></div>
+    </div>`;
+  } else {
+    document.getElementById('r_preview').innerHTML = '';
+  }
+}
+['r_product','r_channel','r_orderRef','r_quantity','r_sellingPrice','r_shipping','r_deductions','r_condition','r_revenueStatus'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderReturnPreview);
+  document.getElementById(id).addEventListener('change', renderReturnPreview);
+});
+document.getElementById('retSaveBtn').addEventListener('click', ()=>{
+  const data = {
+    date: document.getElementById('r_date').value || new Date().toISOString().slice(0,10),
+    channel: document.getElementById('r_channel').value,
+    orderReference: document.getElementById('r_orderRef').value.trim(),
+    productId: document.getElementById('r_product').value,
+    quantity: Number(document.getElementById('r_quantity').value||0),
+    originalSellingPrice: Number(document.getElementById('r_sellingPrice').value||0),
+    returnShippingCost: Number(document.getElementById('r_shipping').value||0),
+    otherDeductions: Number(document.getElementById('r_deductions').value||0),
+    condition: document.getElementById('r_condition').value,
+    revenueStatus: document.getElementById('r_revenueStatus').value,
+    notes: document.getElementById('r_notes').value
+  };
+  const res = editingReturnId ? DataLayer.updateReturn(editingReturnId, data) : DataLayer.createReturn(data);
+  if(!res.ok){ document.getElementById('r_errMsg').textContent = res.errors.join('; '); return; }
+  toast((editingReturnId?'Return updated':'Return '+res.ret.returnNumber+' saved'));
+  renderReturns(); renderProducts(); renderDashboard();
+});
+
+/* ---------- Profit & Loss (Stage 3) ---------- */
+// Same preset formulas as Reports' getDateRange(), applied to this page's own filter controls.
+function getPLDateRange(){
+  const preset = document.getElementById('plPreset').value;
+  const now = new Date(); const y = now.getFullYear(), m = now.getMonth();
+  const fmt = d => d.toISOString().slice(0,10);
+  if(preset==='lastMonth') return {start:fmt(new Date(y,m-1,1)), end:fmt(new Date(y,m,0))};
+  if(preset==='last3') return {start:fmt(new Date(y,m-2,1)), end:fmt(new Date(y,m+1,0))};
+  if(preset==='thisYear') return {start:fmt(new Date(y,0,1)), end:fmt(new Date(y,11,31))};
+  if(preset==='custom') return {start:document.getElementById('plFrom').value||fmt(new Date(y,m,1)), end:document.getElementById('plTo').value||fmt(now)};
+  return {start:fmt(new Date(y,m,1)), end:fmt(new Date(y,m+1,0))};
+}
+document.getElementById('plPreset').addEventListener('change', e=>{
+  const custom = e.target.value==='custom';
+  document.getElementById('plFrom').style.display = custom?'inline-block':'none';
+  document.getElementById('plTo').style.display = custom?'inline-block':'none';
+  renderPL();
+});
+document.getElementById('plFrom').addEventListener('change', renderPL);
+document.getElementById('plTo').addEventListener('change', renderPL);
+
+function computeProfitLoss(range){
+  // Same revenue/COGS/expense logic as Reports' Profitability section — same date range, same fields.
+  const sales = DataLayer.getSales().filter(s=>s.date>=range.start && s.date<=range.end);
+  const grossSalesRevenue = sales.reduce((s,r)=>s+r.amount,0);
+  const cogs = sales.reduce((s,r)=>s+(r.costPriceAtSale||0)*r.qty,0);
+  const operatingExpenses = DataLayer.getExpenses().filter(e=>e.date>=range.start && e.date<=range.end).reduce((s,e)=>s+e.amount,0);
+
+  const returnsInRange = DataLayer.getReturns().filter(r=>r.date>=range.start && r.date<=range.end);
+  // Refunded/reversed sales: each return's own revenueDeduction, summed once. Never re-derived from or
+  // written back into db.sales/db.invoices, so this can never collide with how the original sale is recorded.
+  const refundedSalesDeduction = returnsInRange.reduce((s,r)=>s+DataLayer.returnRevenueDeduction(r),0);
+  // Return-related costs: shipping + other manual deductions, counted regardless of condition/refund status.
+  const returnRelatedCosts = returnsInRange.reduce((s,r)=>s+DataLayer.returnCost(r),0);
+  const unmatchedReturnCount = returnsInRange.filter(r=>!r.matched).length;
+  const pendingInspectionCount = returnsInRange.filter(r=>r.condition==='awaiting-inspection').length;
+
+  const netSalesRevenue = grossSalesRevenue - refundedSalesDeduction;
+  const grossProfit = netSalesRevenue - cogs;
+  const netProfit = grossProfit - operatingExpenses - returnRelatedCosts;
+
+  // Informational only — NOT included in Net Profit. Stock Adjustment records carry no historical cost
+  // basis, so any rupee figure here would have to guess using today's price. Shown as a count only.
+  const damagedAdjustmentQty = (JSON.parse(localStorage.getItem('fishmenTackle_db_v1')||'{}').movements||[])
+    .filter(m=>m.type==='stock-adjustment' && m.reason==='Damaged' && m.date>=range.start && m.date<=range.end+'T23:59:59')
+    .reduce((s,m)=>s+Math.abs(m.qty),0);
+
+  return { grossSalesRevenue, refundedSalesDeduction, netSalesRevenue, cogs, grossProfit,
+    operatingExpenses, returnRelatedCosts, netProfit, unmatchedReturnCount, pendingInspectionCount, damagedAdjustmentQty };
+}
+function renderPL(){
+  const range = getPLDateRange();
+  const d = computeProfitLoss(range);
+  document.getElementById('plWrap').innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h2>Profit & Loss — ${range.start} to ${range.end}</h2></div>
+      <div class="grid" style="padding:16px">
+        <div class="card"><div class="label">Gross Sales Revenue</div><div class="value">${fmtINR(d.grossSalesRevenue)}</div></div>
+        <div class="card ${d.refundedSalesDeduction?'warn':''}"><div class="label">Refunded / Reversed Sales</div><div class="value">-${fmtINR(d.refundedSalesDeduction)}</div></div>
+        <div class="card"><div class="label">Net Sales Revenue</div><div class="value">${fmtINR(d.netSalesRevenue)}</div></div>
+        <div class="card"><div class="label">Cost of Goods Sold</div><div class="value">${fmtINR(d.cogs)}</div></div>
+        <div class="card good"><div class="label">Gross Profit</div><div class="value">${fmtINR(d.grossProfit)}</div></div>
+        <div class="card"><div class="label">Operating Expenses</div><div class="value">${fmtINR(d.operatingExpenses)}</div></div>
+        <div class="card ${d.returnRelatedCosts?'warn':''}"><div class="label">Return-related Costs (shipping + deductions)</div><div class="value">${fmtINR(d.returnRelatedCosts)}</div></div>
+        <div class="card ${d.netProfit<0?'warn':'good'}"><div class="label">Net Profit / Loss</div><div class="value">${fmtINR(d.netProfit)}</div></div>
+      </div>
+      <div style="padding:0 16px 16px;font-size:11.5px;color:var(--ink-soft);line-height:1.7">
+        COGS uses each sale's recorded cost at the time it was made, never today's price.<br>
+        Refunded/Reversed Sales reflects only returns explicitly marked "Refunded" — it is never deducted a second time anywhere else.<br>
+        A resellable return's product cost is <b>not</b> treated as a loss, since that stock was restored to sellable inventory.
+      </div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-head"><h2>Figures Not Reliably Calculable</h2></div>
+      <div style="padding:16px;font-size:13px;line-height:2">
+        <div>Damaged stock-adjustment units in range: <b>${d.damagedAdjustmentQty}</b> — <span style="color:var(--ink-soft)">not included in Net Profit; no historical cost was recorded for these at the time of adjustment</span></div>
+        <div>Unmatched returns in range: <b>${d.unmatchedReturnCount}</b> — <span style="color:var(--ink-soft)">their costs/deductions are still included above, but cannot be verified against a specific original sale</span></div>
+        <div>Returns awaiting inspection: <b>${d.pendingInspectionCount}</b> — <span style="color:var(--ink-soft)">excluded from stock and loss figures until a final condition is recorded</span></div>
+      </div>
+    </div>`;
+}
+
 /* ---------- Wire up ---------- */
 document.getElementById('addProductBtn').addEventListener('click', ()=>openModal(null));
 document.getElementById('cancelBtn').addEventListener('click', closeModal);
@@ -3473,6 +3858,13 @@ if(SessionLayer.getSession().loggedIn === true){
   enterApp();
 } else {
   document.getElementById('loginScreen').style.display = 'flex';
+}
+</script>
+<script>
+// Android/PWA test-deployment addition only: registers the offline-cache service worker.
+// Isolated from the app's own script above — does not call or alter anything in it.
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }
 </script>
 </body>
