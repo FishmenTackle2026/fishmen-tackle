@@ -1,8 +1,8 @@
 // Fishmen Tackle — minimal offline cache for Android/PWA testing.
 // Cache-first for the app shell; does not intercept or alter any app behavior,
 // data, or network calls the app itself makes (e.g. Google Fonts, marketplace CSV links).
-const CACHE_NAME = 'fishmen-tackle-shell-v1';
-const SHELL_FILES = ['./fishmen-tackle.html', './manifest.json', './icon.svg', './icon-maskable.svg'];
+const CACHE_NAME = 'fishmen-tackle-shell-v3';
+const SHELL_FILES = ['./index.html', './manifest.json', './icon.svg', './icon-maskable.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_FILES)));

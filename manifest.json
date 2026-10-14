@@ -1,7 +1,7 @@
 {
   "name": "Fishmen Tackle — Business Manager",
   "short_name": "Fishmen Tackle",
-  "start_url": "./fishmen-tackle.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
