@@ -315,6 +315,7 @@ tr:last-child td{border-bottom:none}
         <h1 id="pageTitle">Dashboard</h1>
       </div>
       <button class="icon-btn" id="themeBtn" title="Toggle theme">🌓</button>
+      <button class="icon-btn" id="logoutBtn" title="Log out">🚪</button>
     </div>
     <div class="content">
       <section class="section active" id="sec-dashboard">
@@ -3840,6 +3841,12 @@ document.getElementById('themeBtn').addEventListener('click', ()=>{
   const next = cur==='dark' ? 'light' : 'dark';
   applyAppearance(next);
   DataLayer.updateAppearance({mode:next});
+});
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  if(confirm('Log out of Fishmen Tackle?')){
+    SessionLayer.clearSession(); // only clears the session key — business data, accounts, and everything else are untouched
+    location.reload();
+  }
 });
 function checkMobile(){ document.getElementById('menuBtn').style.display = window.innerWidth<=820 ? 'flex' : 'none'; }
 window.addEventListener('resize', checkMobile); checkMobile();
